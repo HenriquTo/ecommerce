@@ -19,28 +19,44 @@ cepInput.addEventListener("keypress", (e) => {
         return;
     }
 });
-
 // Get address event
 cepInput.addEventListener("keyup", (e) => {
+
     const inputValue = e.target.value;
 
     //check if we have the correct length
-    if(inputValue.lenght === 8) {
+    if(inputValue.length === 8) {
         getAddress(inputValue);
     }
-})
+});
 
 // Get customer address from API
 const getAddress = async (cep) => {
-    console.log(cep);
-    toggleLoader();
-}
+    toggleLoader();    
+
+    cepInput.blur();
+
+    const apiUrl = `https://viacep.com.br/ws/${cep}/json/`;
+
+    const response = await fetch(apiUrl);
+
+    const data = await response.json();
+
+    // Show error and reset form
+    if (data.erro==="true") {
+        addressForm.reset();
+        toggleLoader();
+        //Show message
+        return
+    }
+};
 
 // Show or hide loader
 const toggleLoader = () => {
+
     const fadeElement = document.querySelector("#fade");
     const loaderElement = document.querySelector("#loader");
 
     fadeElement.classList.toggle("hide");
     loaderElement.classList.toggle("hide");
-};
+}
